@@ -1,0 +1,62 @@
+# Vim leftovers
+*.*~
+
+# Flask
+.Python
+env
+env3
+venv
+.idea
+*.pyc
+*.*~
+__pycache__/
+*.py[cod]
+*.manifest
+*.spec
+pip-log.txt
+pip-delete-this-directory.txt
+*.log
+.idea
+target
+
+# Node
+node_modules
+yarn.lock
+package.lock
+
+# React
+build
+yarn.lock
+
+# Angular
+dist/
+downloads/
+eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.cache
+nosetests.xml
+coverage.xml
+
+# MongoDB data
+db_data
+
+#VS Code
+.vscode/
+
+# OSX Crap
+.DS_Store
+
+# Backups
+*.dmp

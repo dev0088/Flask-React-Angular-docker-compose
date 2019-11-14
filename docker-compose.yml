@@ -1,0 +1,86 @@
+# docker-compose build
+# docker-compose up -d web
+
+version: '3.5'
+
+services:
+  db:
+    image: mongo:4.0.13
+    container_name: mongodb
+    volumes:
+      - ./db_data:/data/db
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+    networks:
+      services-network:
+        aliases:
+          - db
+
+  flask-app:
+    container_name: flask-app
+    depends_on:
+      - db
+    links:
+      - db:db
+    build:
+      context: ./flask-app
+      dockerfile: ./Dockerfile
+    volumes:
+      - './flask-app:/flask-app'
+    # command: bash -c "python hello.py"
+    ports:
+      - "5000:5000"
+    networks:
+      services-network:
+        aliases:
+          - flask-network
+
+  react-app:
+    container_name: react-app
+    depends_on:
+      - flask-app
+    links:
+      - flask-app:flask-network
+    build:
+      context: ./react-app
+      dockerfile: ./Dockerfile
+    volumes:
+      - './react-app:/react-app'
+    command: bash -c "npm start"
+    ports:
+      - "3000:3000"
+    networks:
+      services-network:
+        aliases:
+          - react-app
+
+  angular-app:
+    container_name: angular-app
+    depends_on:
+      - flask-app
+    links:
+      - flask-app:flask-network
+    build:
+      context: ./angular-app
+      dockerfile: ./Dockerfile
+    volumes:
+      - './angular-app:/angular-app'
+    # command: bash -c "ng serve --host 0.0.0.0"
+    ports:
+      - "4200:4200"
+    networks:
+      services-network:
+        aliases:
+          - angular-app
+
+volumes:
+  db_data:
+
+networks:
+  services-network:
+    name: services-network
+    driver: bridge
