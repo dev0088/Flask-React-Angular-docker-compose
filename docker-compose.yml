@@ -96,7 +96,7 @@ services:
       - "443:443"
     restart: on-failure:5
     networks:
-      gcal_backend:
+      services-network:
         aliases:
            - nginx-network
 
