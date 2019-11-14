@@ -7,6 +7,7 @@ services:
   db:
     image: mongo:4.0.13
     container_name: mongodb
+    hostname: db
     volumes:
       - ./db_data:/data/db
     restart: always
@@ -22,6 +23,7 @@ services:
 
   flask-app:
     container_name: flask-app
+    hostname: flask
     depends_on:
       - db
     links:
@@ -31,7 +33,6 @@ services:
       dockerfile: ./Dockerfile
     volumes:
       - './flask-app:/flask-app'
-    # command: bash -c "python hello.py"
     ports:
       - "5000:5000"
     networks:
@@ -41,6 +42,7 @@ services:
 
   react-app:
     container_name: react-app
+    hostname: react
     depends_on:
       - flask-app
     links:
@@ -60,6 +62,7 @@ services:
 
   angular-app:
     container_name: angular-app
+    hostname: angular
     depends_on:
       - flask-app
     links:
@@ -69,13 +72,33 @@ services:
       dockerfile: ./Dockerfile
     volumes:
       - './angular-app:/angular-app'
-    # command: bash -c "ng serve --host 0.0.0.0"
     ports:
       - "4200:4200"
     networks:
       services-network:
         aliases:
           - angular-app
+
+  nginx:
+    container_name: nginx
+    image: nginx
+    hostname: nginx
+    volumes:
+      - ./sites-enabled:/etc/nginx/conf.d:ro
+      - ./logs:/var/log/nginx
+    links:
+      - db:db
+      - flask-app:flask-network
+      - react-app:react-network
+      - angular-app:angular-network
+    ports:
+      - "80:8080"
+      - "443:443"
+    restart: on-failure:5
+    networks:
+      gcal_backend:
+        aliases:
+           - nginx-network
 
 volumes:
   db_data:

@@ -8,8 +8,8 @@ docker-compose stop
 docker-compose up -d --build
 
 # Remove caches
-yes | docker container prune
-yes | docker network prune
-yes | docker image prune
+# yes | docker container prune
+# yes | docker network prune
+# yes | docker image prune
 
 

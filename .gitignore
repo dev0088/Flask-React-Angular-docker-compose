@@ -52,6 +52,9 @@ coverage.xml
 # MongoDB data
 db_data
 
+# Nginx
+logs
+
 #VS Code
 .vscode/
 
