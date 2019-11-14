@@ -52,7 +52,7 @@ services:
       dockerfile: ./Dockerfile
     volumes:
       - './react-app:/react-app'
-    command: bash -c "npm start"
+    # command: bash -c "npm start"
     ports:
       - "3000:3000"
     networks:
@@ -72,6 +72,7 @@ services:
       dockerfile: ./Dockerfile
     volumes:
       - './angular-app:/angular-app'
+    # command: bash -c "ng serve --host 0.0.0.0"
     ports:
       - "4200:4200"
     networks:
@@ -92,7 +93,7 @@ services:
       - react-app:react-network
       - angular-app:angular-network
     ports:
-      - "80:8080"
+      - "8888:8080"
       - "443:443"
     restart: on-failure:5
     networks:

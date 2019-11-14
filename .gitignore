@@ -54,6 +54,7 @@ db_data
 
 # Nginx
 logs
+sites_enabled/
 
 #VS Code
 .vscode/
