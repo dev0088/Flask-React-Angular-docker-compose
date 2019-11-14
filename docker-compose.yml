@@ -85,7 +85,7 @@ services:
     image: nginx
     hostname: nginx
     volumes:
-      - ./sites-enabled:/etc/nginx/conf.d:ro
+      - ./nginx/sites-enabled:/etc/nginx/conf.d:ro
       - ./logs:/var/log/nginx
     links:
       - db:db

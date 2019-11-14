@@ -1,8 +1,8 @@
 #!/bin/sh
 
 # Stop previous dockers
-docker-compose down
 docker-compose stop
+docker-compose down
 
 # Run dockers as daemon
 docker-compose up -d --build
