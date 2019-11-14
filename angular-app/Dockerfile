@@ -14,7 +14,6 @@ ENV PATH /angularapp/node_modules/.bin:$PATH
 
 # install and cache app dependencies
 COPY package.json /angularapp/package.json
-RUN npm install --save-dev @angular-devkit/build-angular
 RUN npm install -g @angular/cli@8.3.19
 RUN npm install
 
