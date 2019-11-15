@@ -67,7 +67,7 @@ services:
       - './react-app:/react-app'
     # command: bash -c "npm start"
     ports:
-      - "3000:80"
+      - "3000:3000"
     networks:
       services-network:
         aliases:
@@ -84,10 +84,9 @@ services:
       context: ./angular-app
       dockerfile: ./Dockerfile
     volumes:
-      - './angular-app:/angular-app'
-    # command: bash -c "ng serve --host 0.0.0.0"
+      - "./angular-app:/angular-app"
     ports:
-      - "4200:80"
+      - "4200:4200"
     networks:
       services-network:
         aliases:
