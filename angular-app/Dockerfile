@@ -1,8 +1,5 @@
 FROM node:latest AS build
 
-#ARG env=prod
-#RUN apk update && apk add --no-cache make git
-
 WORKDIR /angularapp
 
 COPY package.json /angularapp/package.json
@@ -12,6 +9,7 @@ RUN cd /angularapp && npm install
 COPY . /angularapp
 RUN cd /angularapp && npm run build --prod --build-optimizer
 RUN cd /angularapp/dist && ls -al
+
 
 FROM nginx:alpine
 
