@@ -1,42 +1,24 @@
-# base image
-FROM node:12.13.0
+FROM node:latest AS build
 
-# install chrome for protractor tests
-#RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
-#RUN sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
-#RUN apt-get update && apt-get install -yq google-chrome-stable
+#ARG env=prod
+#RUN apk update && apk add --no-cache make git
 
-# set working directory
 WORKDIR /angularapp
 
-# add `/app/node_modules/.bin` to $PATH
-ENV PATH /angularapp/node_modules/.bin:$PATH
-
-# install and cache app dependencies
 COPY package.json /angularapp/package.json
 RUN npm install -g @angular/cli@8.3.19
-RUN npm install
+RUN cd /angularapp && npm install
 
-
-# add app
 COPY . /angularapp
-RUN cd /angularapp
+RUN cd /angularapp && npm run build
 
-# run tests
-RUN ng test --watch=false
-RUN ng e2e --port 4202
 
-# generate build
-RUN ng build --output-path=dist
+FROM nginx:alpine
 
-# base image
-FROM nginx:1.16.0-alpine
-
-# copy artifact build from the 'build environment'
 COPY --from=build /angularapp/dist /usr/share/nginx/html
+RUN rm /etc/nginx/conf.d/default.conf
+COPY nginx/nginx.conf /etc/nginx/conf.d
 
-# expose port 80
-EXPOSE 80
+EXPOSE 4200
 
-# run nginx
 CMD ["nginx", "-g", "daemon off;"]
