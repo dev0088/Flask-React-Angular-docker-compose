@@ -22,5 +22,21 @@ RUN npm install
 COPY . /angularapp
 RUN cd /angularapp
 
-# start app
-CMD ["ng", "serve", "--host", "0.0.0.0"]
+# run tests
+RUN ng test --watch=false
+RUN ng e2e --port 4202
+
+# generate build
+RUN ng build --output-path=dist
+
+# base image
+FROM nginx:1.16.0-alpine
+
+# copy artifact build from the 'build environment'
+COPY --from=build /angularapp/dist /usr/share/nginx/html
+
+# expose port 80
+EXPOSE 80
+
+# run nginx
+CMD ["nginx", "-g", "daemon off;"]
