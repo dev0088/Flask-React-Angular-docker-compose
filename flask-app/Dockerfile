@@ -10,8 +10,6 @@ RUN pip install -r requirements.txt
 COPY . /flask-app/
 RUN cd /flask-app/
 
-#ENV MONGO_URL "mongodb://root:password@mongodb:27017/flaskdb"
-
 EXPOSE 5000
 
 CMD ["python", "hello.py"]
