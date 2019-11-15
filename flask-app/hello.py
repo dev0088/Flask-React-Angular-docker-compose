@@ -3,46 +3,25 @@ from flask import Flask, request, jsonify
 from flask_pymongo import PyMongo
 
 app = Flask(__name__)
-app.config["MONGO_URI"] = os.environ.get("MONGO_URL", "mongodb://127.0.0.1:27017/flask-app")
+app.config["MONGO_URI"] =  "mongodb://mongodb:27017/flaskdb"
+#app.config["MONGO_URI"] = 'mongodb://' + os.environ['MONGODB_USERNAME'] + ':' + os.environ['MONGODB_PASSWORD'] + '@' + os.environ['MONGODB_HOSTNAME'] + ':27017/' + os.environ['MONGODB_DATABASE']
 mongo = PyMongo(app)
+db = mongo.db
 
 @app.route("/", methods=["GET"])
 def hello():
-    return "<h1>Hello World!</h1>"
+    return "<h1>Falsk: Hello World!</h1>"
 
-@app.route('/user', methods=['GET', 'POST', 'DELETE', 'PATCH'])
-def user():
+@app.route('/users', methods=['GET'])
+def users():
     if request.method == 'GET':
-        query = request.args
-        data = mongo.db.users.find_one(query)
+        users = db.user.find()
+        print('==== users: ', users)
+        data = []
+        for user in users:
+          data.append(user)
         return jsonify(data), 200
 
-    data = request.get_json()
-    if request.method == 'POST':
-        if data.get('name', None) is not None and data.get('email', None) is not None:
-            mongo.db.users.insert_one(data)
-            return jsonify({'ok': True, 'message': 'User created successfully!'}), 200
-        else:
-            return jsonify({'ok': False, 'message': 'Bad request parameters!'}), 400
-
-    if request.method == 'DELETE':
-        if data.get('email', None) is not None:
-            db_response = mongo.db.users.delete_one({'email': data['email']})
-            if db_response.deleted_count == 1:
-                response = {'ok': True, 'message': 'record deleted'}
-            else:
-                response = {'ok': True, 'message': 'no record found'}
-            return jsonify(response), 200
-        else:
-            return jsonify({'ok': False, 'message': 'Bad request parameters!'}), 400
-
-    if request.method == 'PATCH':
-        if data.get('query', {}) != {}:
-            mongo.db.users.update_one(
-                data['query'], {'$set': data.get('payload', {})})
-            return jsonify({'ok': True, 'message': 'record updated'}), 200
-        else:
-            return jsonify({'ok': False, 'message': 'Bad request parameters!'}), 400
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)

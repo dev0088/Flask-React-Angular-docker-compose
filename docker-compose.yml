@@ -4,30 +4,43 @@
 version: '3.5'
 
 services:
-  db:
+  mongodb:
     image: mongo:4.0.13
     container_name: mongodb
     hostname: db
     volumes:
-      - ./db_data:/data/db
+      - ./mongodbdata:/data/db
+      - "$PWD/mongo-entrypoint/:/docker-entrypoint-initdb.d/"
+    command: mongod
     restart: always
     ports:
       - "27017:27017"
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: flaskdb
+      MONGODB_DATA_DIR: /data/db
+      MONDODB_LOG_DIR: /dev/null
     networks:
       services-network:
         aliases:
-          - db
+          - mongodb
 
   flask-app:
     container_name: flask-app
     hostname: flask
+    environment:
+      APP_ENV: "prod"
+      APP_DEBUG: "False"
+      APP_PORT: 5000
+      MONGODB_DATABASE: flaskdb
+      MONGODB_USERNAME: root
+      MONGODB_PASSWORD: password
+      MONGODB_HOSTNAME: mongodb
     depends_on:
-      - db
+      - mongodb
     links:
-      - db:db
+      - mongodb:mongodb
     build:
       context: ./flask-app
       dockerfile: ./Dockerfile
@@ -88,7 +101,7 @@ services:
       - ./nginx/sites-enabled:/etc/nginx/conf.d:ro
       - ./logs:/var/log/nginx
     links:
-      - db:db
+      - mongodb:mongodb
       - flask-app:flask-network
       - react-app:react-network
       - angular-app:angular-network
@@ -102,7 +115,9 @@ services:
            - nginx-network
 
 volumes:
-  db_data:
+  mongodbdata:
+    driver: local
+
 
 networks:
   services-network:
